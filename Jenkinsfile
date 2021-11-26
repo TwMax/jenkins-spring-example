@@ -18,6 +18,7 @@ pipeline {
             }
         }
         stage('Build-Artifactory') {
+            steps {
          script {
           dir("test")
             {

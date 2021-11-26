@@ -1,76 +1,62 @@
 pipeline {
-    agent any
-
-    tools {
-        // Install the Maven version configured as "M3" and add it to the path.
-        maven "M3"
-    }
-
-    stages {
-        stage('Build') {
-            steps {
-                sh "mvn clean compile"
+  agent any
+  stages{
+   stage('Build') {
+       steps {
+         script {
+          dir("test")
+            {
+             sh  'touch $WORKSPACE/Artifact_$BUILD_NUMBER'
             }
-        }
-        stage('Test') {
-            steps {
-                sh "mvn test"
             }
+          }
         }
-        stage('Build-artifactory') {
-               steps {
-                 script {
-                  dir("test")
-                    {
-                     sh  'touch $WORKSPACE/Artifact_$BUILD_NUMBER'
-                    }
-                    }
-                  }
-                }
-        stage('Upload-Artifactory') {
+         stage ('Upload') {
             steps {
-                rtUpload(
+                rtUpload (
                     buildName: JOB_NAME,
                     buildNumber: BUILD_NUMBER,
-                    serverId: SERVER_ID,
+                    serverId: SERVER_ID, // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
                     spec: '''{
-                                "files": [
-                                    {
-                                    "pattern": "$WORKSPACE/Demo-Artifactory/Artifact_*",
-                                    "target": "krzysztof/",
-                                    "recursive": "false"
-                                    }
-                               ]
-                    }'''
-                )
+                              "files": [
+                                 {
+                                  "pattern": "$WORKSPACE/jenkins-spring-example/Artifact_*",
+                                  "target": "result/",
+                                  "recursive": "false"
+                                }
+                             ]
+                        }'''
+                    )
             }
         }
-        stage('Publish build info') {
+        stage ('Publish build info') {
             steps {
                 rtPublishBuildInfo (
                     buildName: JOB_NAME,
                     buildNumber: BUILD_NUMBER,
                     serverId: SERVER_ID
-                    )
+                )
 
-//                 rtPublishBuildInfo (
-//                     buildName: JOB_NAME,
-//                     buildNumber: BUILD_NUMBER,
-//                     serverId: SERVER_ID
-//                     )
+                rtPublishBuildInfo (
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER,
+                    serverId: SERVER_ID
+                )
             }
         }
-
-        stage('Add interactive promotion') {
+         stage ('Add interactive promotion') {
             steps {
                 rtAddInteractivePromotion (
+                    //Mandatory parameter
                     serverId: SERVER_ID,
-                    targetRepo: 'krzysztof/',
+
+                    //Optional parameters
+                    targetRepo: 'result/',
                     displayName: 'Promote me please',
                     buildName: JOB_NAME,
                     buildNumber: BUILD_NUMBER,
-                    comment: 'this is promotion comment',
-                    sourceRepo: 'krzysztof/',
+                    comment: 'this is the promotion comment',
+                    sourceRepo: 'result/',
                     status: 'Released',
                     includeDependencies: true,
                     failFast: true,
@@ -83,6 +69,13 @@ pipeline {
                     buildNumber: BUILD_NUMBER
                 )
             }
+         }
+         stage ('Removing files') {
+            steps {
+                sh 'rm -rf $WORKSPACE/*'
+            }
         }
-    }
+
+
+  }
 }

@@ -11,6 +11,11 @@ pipeline {
             }
           }
         }
+        stage('clean install') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
          stage ('Upload') {
             steps {
                 rtUpload (
@@ -20,8 +25,8 @@ pipeline {
                     spec: '''{
                               "files": [
                                  {
-                                  "pattern": "$WORKSPACE/jenkins-spring-example/Artifact_*",
-                                  "target": "result/",
+                                  "pattern": "*.jar",
+                                  "target": "krzysztof/",
                                   "recursive": "false"
                                 }
                              ]
@@ -51,12 +56,12 @@ pipeline {
                     serverId: SERVER_ID,
 
                     //Optional parameters
-                    targetRepo: 'result/',
+                    targetRepo: 'krzysztof/',
                     displayName: 'Promote me please',
                     buildName: JOB_NAME,
                     buildNumber: BUILD_NUMBER,
                     comment: 'this is the promotion comment',
-                    sourceRepo: 'result/',
+                    sourceRepo: 'krzysztof/',
                     status: 'Released',
                     includeDependencies: true,
                     failFast: true,

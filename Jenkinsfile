@@ -30,7 +30,7 @@ pipeline {
                                  {
                                   "pattern": "$WORKSPACE/target/*.jar",
                                   "target": "krzysztof/",
-                                //   "recursive": "false"
+                                  "recursive": "false"
                                 }
                              ]
                         }'''

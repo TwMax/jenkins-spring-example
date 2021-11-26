@@ -17,10 +17,67 @@ pipeline {
                 sh "mvn test"
             }
         }
-//         stage('Deploy') {
-//             steps {
-//                 sh "mvn test"
-//             }
-//         }
+        stage('Build-Artifactory') {
+            steps {
+                sh 'touch $WORKSPACE/Artifact_$BUILD_NUMBER'
+            }
+        }
+        stage('Upload-Artifactory') {
+            steps {
+                rtUpload(
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER,
+                    serverId: SERVER_ID,
+                    spec: '''{
+                                "files": [
+                                    {
+                                    "pattern": "C:/workspace/DOCKER/jenkins-spring-example/Artifact_*",
+                                    "target": "krzysztof/",
+                                    "recursive": "false"
+                                    }
+                               ]
+                    }'''
+                )
+            }
+        }
+        stage('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER,
+                    serverId: SERVER_ID
+                    )
+
+//                 rtPublishBuildInfo (
+//                     buildName: JOB_NAME,
+//                     buildNumber: BUILD_NUMBER,
+//                     serverId: SERVER_ID
+//                     )
+            }
+        }
+
+        stage('Add interactive promotion') {
+            steps {
+                rtAddInteractivePromotion (
+                    serverId: SERVER_ID,
+                    targetRepo: 'krzysztof/',
+                    displayName: 'Promote me please',
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER,
+                    comment: 'this is promotion comment',
+                    sourceRepo: 'krzysztof/',
+                    status: 'Released',
+                    includeDependencies: true,
+                    failFast: true,
+                    copy: true
+                )
+
+                rtAddInteractivePromotion (
+                    serverId: SERVER_ID,
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER
+                )
+            }
+        }
     }
 }

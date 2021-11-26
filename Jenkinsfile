@@ -17,14 +17,16 @@ pipeline {
                 sh "mvn test"
             }
         }
-        stage('Build-Artifactory') {
-         script {
-          dir("test")
-            {
-             sh  'touch $WORKSPACE/Artifact_$BUILD_NUMBER'
-            }
-            }
-        }
+        stage('Build-artifactory') {
+               steps {
+                 script {
+                  dir("test")
+                    {
+                     sh  'touch $WORKSPACE/Artifact_$BUILD_NUMBER'
+                    }
+                    }
+                  }
+                }
         stage('Upload-Artifactory') {
             steps {
                 rtUpload(

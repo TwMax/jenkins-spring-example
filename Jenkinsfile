@@ -18,8 +18,11 @@ pipeline {
             }
         }
         stage('Build-Artifactory') {
-            steps {
-                sh 'touch $WORKSPACE/Artifact_$BUILD_NUMBER'
+         script {
+          dir("test")
+            {
+             sh  'touch $WORKSPACE/Artifact_$BUILD_NUMBER'
+            }
             }
         }
         stage('Upload-Artifactory') {
@@ -31,7 +34,7 @@ pipeline {
                     spec: '''{
                                 "files": [
                                     {
-                                    "pattern": "C:/workspace/DOCKER/jenkins-spring-example/Artifact_*",
+                                    "pattern": "$WORKSPACE/Demo-Artifactory/Artifact_*",
                                     "target": "krzysztof/",
                                     "recursive": "false"
                                     }

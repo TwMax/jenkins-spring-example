@@ -22,13 +22,13 @@ pipeline {
          stage ('Upload') {
             steps {
                 rtUpload (
-                    // buildName: JOB_NAME,
-                    // buildNumber: BUILD_NUMBER,
-                    // serverId: SERVER_ID, // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
+                    buildName: JOB_NAME,
+                    buildNumber: BUILD_NUMBER,
+                    serverId: SERVER_ID, // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
                     spec: '''{
                               "files": [
                                  {
-                                  "pattern": "*.jar",
+                                  "pattern": "$WORKSPACE/target/*.jar",
                                   "target": "krzysztof/",
                                 //   "recursive": "false"
                                 }

@@ -31,7 +31,7 @@ pipeline {
                     spec: '''{
                                 "files": [
                                     {
-                                    "pattern": "C:/workspace/DOCKER/jenkins-spring-example/Artifact_*",
+                                    "pattern": "$WORKSPACE/Demo-Artifactory/Artifact_*",
                                     "target": "krzysztof/",
                                     "recursive": "false"
                                     }

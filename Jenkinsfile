@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  tools {
+      maven 'M3'
+  }
   stages{
    stage('Build') {
        steps {
@@ -11,23 +14,23 @@ pipeline {
             }
           }
         }
-        stage('clean install') {
-            steps {
-                sh 'mvn clean install'
+    stage('clean install') {
+        steps {
+            sh "mvn clean install"
             }
         }
          stage ('Upload') {
             steps {
                 rtUpload (
-                    buildName: JOB_NAME,
-                    buildNumber: BUILD_NUMBER,
-                    serverId: SERVER_ID, // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
+                    // buildName: JOB_NAME,
+                    // buildNumber: BUILD_NUMBER,
+                    // serverId: SERVER_ID, // Obtain an Artifactory server instance, defined in Jenkins --> Manage:
                     spec: '''{
                               "files": [
                                  {
                                   "pattern": "*.jar",
                                   "target": "krzysztof/",
-                                  "recursive": "false"
+                                //   "recursive": "false"
                                 }
                              ]
                         }'''

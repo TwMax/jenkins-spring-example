@@ -21,7 +21,7 @@ pipeline {
                               "files": [
                                  {
                                   "pattern": "$WORKSPACE/jenkins-spring-example/Artifact_*",
-                                  "target": "result/",
+                                  "target": "krzysztof/",
                                   "recursive": "false"
                                 }
                              ]
@@ -51,12 +51,12 @@ pipeline {
                     serverId: SERVER_ID,
 
                     //Optional parameters
-                    targetRepo: 'result/',
+                    targetRepo: 'krzysztof/',
                     displayName: 'Promote me please',
                     buildName: JOB_NAME,
                     buildNumber: BUILD_NUMBER,
                     comment: 'this is the promotion comment',
-                    sourceRepo: 'result/',
+                    sourceRepo: 'krzysztof/',
                     status: 'Released',
                     includeDependencies: true,
                     failFast: true,
